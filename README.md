@@ -44,7 +44,7 @@ $ python manage.py migrate
 ```
 
 6. Start the development server:
-```python
+```bash
 $ python manage.py runserver
 ```
   
