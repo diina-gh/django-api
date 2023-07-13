@@ -14,15 +14,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
-# from scribe_api.views import PostAPIView
 from rest_framework import routers
-from scribe_api.views import PostViewset, CategoryViewset
+from apps.blogs.views import PostViewset, CategoryViewset
+from apps.auths.views import UserViewSet, GroupViewSet, PermissionViewSet
 
 router = routers.SimpleRouter()
-router.register('post', PostViewset, basename='post')
-router.register('category', CategoryViewset, basename='category')
+router.register('posts', PostViewset, basename='posts')
+router.register('categories', CategoryViewset, basename='categories')
+router.register('users', UserViewSet)
+router.register('groups', GroupViewSet)
+router.register('permissions', PermissionViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
