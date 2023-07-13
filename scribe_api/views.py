@@ -16,7 +16,7 @@ class CategoryViewset(ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = PageNumberPagination
+    pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = [] 
     search_fields = ['name', 'desc']
@@ -31,17 +31,6 @@ class PostViewset(ModelViewSet):
     filterset_fields = ['published', 'user']  
     search_fields = ['title', 'desc']
     ordering_fields = ['title', 'created_at', 'updated_at']  # Fields to order by
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset().filter(user=request.user.id))
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
@@ -59,6 +48,16 @@ class PostViewset(ModelViewSet):
             queryset = queryset.select_related('category')
         return queryset
 
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset().filter(user=request.user.id))
+    #     page = self.paginate_queryset(queryset)
+
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
     # def create(self, request, *args, **kwargs):
     #     serializer = PostSerializer(data=request.data)
@@ -67,7 +66,6 @@ class PostViewset(ModelViewSet):
     #         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     # @action(detail=True, methods=['put'], permission_classes=[permissions.IsAuthenticated])
     # def set_published(self, request, pk=None):
